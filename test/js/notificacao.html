@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>notificacao</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        label, input, button {
+            display: block;
+            margin-bottom: 10px;
+        }
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>notificacao</h2>
+    <form id="notificacaoForm">
+        <input type="hidden" id="idusuario" name="idusuario" value="1">
+        <button type="submit">carregar</button>
+    </form>
+
+    <script>
+        // Script para pesquisar dados
+        document.getElementById('notificacaoForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            try {
+                const response = await fetch(`http://localhost:3000/notificacao/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+                const data = await response.json();
+                console.log(data);
+                // Exibir resultado da pesquisa (pode ser ajustado conforme necessário)
+                alert(JSON.stringify(data));
+            } catch (error) {
+                console.error('Erro ao buscar notificacao:', error);
+                alert('Erro ao buscar notificacao: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

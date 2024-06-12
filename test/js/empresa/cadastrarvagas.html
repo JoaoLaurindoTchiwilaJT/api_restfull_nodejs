@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Vaga</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        label, input, textarea, button {
+            display: block;
+            margin-bottom: 10px;
+        }
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>Formulário de vaga</h2>
+    <form id="vagaForm">
+        <label for="titulo">titulo:</label>
+        <input type="text" id="titulo" name="titulo" required>
+        <label for="descricao">descricao:</label>
+        <textarea type="text" id="descricao" name="descricao" required></textarea>
+        <label for="responsabilidade">responsabilidade:</label>
+        <textarea type="text" id="responsabilidade" name="responsabilidade" required></textarea>
+        <label for="diferenciais">diferenciais:</label>
+        <textarea type="text" id="diferenciais" name="diferenciais" required></textarea>
+        <label for="beneficios">beneficios:</label>
+        <textarea type="text" id="beneficios" name="beneficios" required></textarea>
+        <label for="experiencia">experiencia:</label>
+        <textarea type="text" id="experiencia" name="experiencia" required></textarea>
+        <label for="tempo_trabalho">Tempo De Trabalho:</label>
+        <input type="text" id="tempo_trabalho" name="tempo_trabalho" required>
+        <label for="salario">Salario:</label>
+        <input type="text" id="salario" name="salario" required>
+        <label for="qtd">Quantidade de vagas:</label>
+        <input type="text" id="qtd" name="qtd" required>
+        <input type="hidden" id="idempresa" name="idempresa" value="2">
+        <button type="submit">cadastrar vaga</button>
+    </form>
+   
+    <script>
+        document.getElementById('vagaForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // Criando um objeto JSON com os valores do formulário
+            const formData = {
+                titulo: document.getElementById('titulo').value,
+                descricao: document.getElementById('descricao').value,
+                responsabilidade: document.getElementById('responsabilidade').value,
+                diferenciais: document.getElementById('diferenciais').value,
+                beneficios: document.getElementById('beneficios').value,
+                experiencia: document.getElementById('experiencia').value,
+                tempo_trabalho: document.getElementById('tempo_trabalho').value,
+                salario: document.getElementById('salario').value,
+                qtd: document.getElementById('qtd').value,
+                idempresa: document.getElementById('idempresa').value
+            };
+
+            // Convertendo o objeto JSON em uma string
+            const jsonData = JSON.stringify(formData);
+
+            fetch('http://localhost:3000/vaga', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: jsonData
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('vaga cadastrada com sucesso!');
+                    alert('vaga cadastrada com sucesso!');
+                } else {
+                    console.error('Erro ao cadastrar vaga:', response.statusText);
+                    alert('Erro ao cadastrar vaga: ' + response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao enviar requisição:', error);
+                alert('Erro ao enviar requisição: ' + error.message);
+            });
+        });
+    </script>
+</body>
+</html>

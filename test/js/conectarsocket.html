@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Call</title>
+</head>
+<body>
+    <h1>Iniciar Videochamada</h1>
+    <form id="callForm">
+        <!-- Campos adicionais do formulário, se necessário -->
+        <button type="submit">Iniciar Chamada</button>
+    </form>
+
+    <script>
+        document.getElementById('callForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            fetch('http://localhost:3000/chamar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "idemissor": "3",
+                    "idreceptor": "2" // Certifique-se de passar IDs diferentes para o chamador e o destinatário
+                    
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data); // Aqui você pode lidar com a resposta do servidor
+            })
+            .catch(error => {
+                console.error('Erro ao solicitar videochamada:', error);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensagem</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        label, input, button {
+            display: block;
+            margin-bottom: 10px;
+        }
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>cadastrar Mensagem</h2>
+    <label for="">Descrição:</label>
+    <input type="text" id="descricao" required>
+    <input type="hidden" id="emissor" name="emissor" value="2">
+    <input type="hidden" id="idusuario" name="idusuario" value="1">
+    <button onclick="cadastrarmensagem()">Adicionar Like</button>
+
+    <script>
+        function cadastrarmensagem() {
+            // Obtendo os valores dos campos
+            var descricao = document.getElementById('descricao').value;
+            var emissor = document.getElementById('emissor').value;
+            var idusuario = document.getElementById('idusuario').value;
+            // Fazendo a requisição POST
+            fetch('http://localhost:3000/mensagem', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({descricao:descricao, emissor: emissor, idusuario : idusuario })
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('mensagem adicionada com sucesso!');
+                    alert('mensagem adicionada com sucesso!');
+                } else {
+                    console.error('Erro ao adicionar mensagem:', response.statusText);
+                    alert('Erro ao adicionar mensagem: ' + response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao enviar requisição:', error);
+                alert('Erro ao enviar requisição: ' + error.message);
+            });
+        }
+    </script>
+</body>
+</html>

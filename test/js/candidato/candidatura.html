@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Candidatura</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        label, input, textarea, button {
+            display: block;
+            margin-bottom: 10px;
+        }
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>Formulário de Candidatura</h2>
+    <form id="candidatoForm">
+        <div>
+            <label for="">Programador Front-end</label>
+            <input type="hidden" id="idvaga" name="idvaga" value="1">
+            <input type="hidden" id="idcandidato" name="idcandidato" value="2">
+            <button type="submit" >Aplicar para a vaga</button>
+        </div>
+        
+    </form>
+
+    <script>
+        document.getElementById('candidatoForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // Criando um objeto JSON com os valores do formulário
+            const formData = {
+                idvaga: document.getElementById('idvaga').value,
+                idcandidato: document.getElementById('idcandidato').value
+            };
+
+            // Convertendo o objeto JSON em uma string
+            const jsonData = JSON.stringify(formData);
+
+            fetch('http://localhost:3000/candidatura', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: jsonData
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Candidatura feita com sucesso!');
+                    alert('Candidatura feita com sucesso!');
+                } else {
+                    console.error('Erro ao fazer Candidatura:', response.statusText);
+                    alert('Erro ao fazer Candidatura: ' + response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao enviar requisição:', error);
+                alert('Erro ao enviar requisição: ' + error.message);
+            });
+        });
+    </script>
+</body>
+</html>

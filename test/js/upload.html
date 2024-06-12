@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload de Áudio</title>
+</head>
+<body>
+    
+<button id="startRecord" onclick="recordAudio">Iniciar Gravação</button>
+<script>
+
+    let record = null
+
+    function sendVoiceNote(base64){
+      var ajax = new XMLHttpRequest()
+
+      // set request method as POST , set URL and set asynchronouns to true
+      ajax.open("POST", "http://localhost:3000/mensagem/enviar", true)
+
+      // send base64 string to server
+      const formData = new FormData();
+      formData.append("base64", base64)
+      ajax.send(formData)
+    }
+
+    function doRecordSaudio(){
+        return new Promise(function (resolve) {
+          // get user audio media
+          navigator.mediaDevices.getUserMedia({
+            audio: true
+          })
+          .then( function ( stream){
+            
+            //create media recorder object
+            const mediaRecorder = new MediaRecorder(stream)
+
+            //save audio chucks in an array
+            const audioChucks = []
+            mediaRecorder.addEventListener("dataavailable", function (event) {
+                audioChucks.push(event.data)
+            })
+
+            // create a start function
+            const start = function () {
+              
+              // when recorder starts, set the icon to stop
+              document.getElementById("icon-record-audio").className = "fa fa-stop-circle"
+
+              // on icon clicked
+              document.getElementById("icon-record-audio").onclick = async function(){
+                // stop the recorder
+                if (recoder != null) {
+                   const audio = await recorder.stop()
+                   
+                   audio.play()
+
+                   // get audio stream
+                   const reader = new FileReader()
+                   reader.readAsDataURL(audio.audioBlob)
+                   reader.onloadend = function () {
+                     // get base64
+                     let base64 = reader.result
+
+                     // get only base64 data
+                     base64 = base64.split(',')[1]
+
+                     // send base64 to server to save
+                     sendVoiceNote(base64)
+                   }
+                }
+              }
+              // start media recorder
+              mediaRecorder.start()
+            }
+
+             // create a stop   function
+             const stop = function () {
+              return new Promise( function (resolve) {
+                // on recording stop listener
+                mediaRecorder.addEventListener("stop", function () {
+                  
+                  // change the icon back to microphone
+                  document.getElementById("icon-record-audio").className = "fa fa-microphone"
+
+                  // reset the onclick listiner so when again  clicked, it will record a new audio
+                  document.getElementById("icon-record-audio").onclick = async function
+                  () {
+                    recordAudio() 
+                  }
+
+                  // convert the audio chucks array into blob
+                  const audioBlob = new Blob(audioChucks)
+
+                  // create URL object from URL
+                  const audioUrl = URL.createObjectURL(audioBlob)
+
+                  // create an audio object to play
+                  const audio = new Audio(audioUrl)
+                  const play = function () {
+                      audio.play()
+                  }
+
+                  // send  the values back to the promise
+
+                  resolve({
+                    audioBlob,
+                    play
+                  })
+                })
+
+                // stop the media recoder
+                mediaRecorder.stop()
+              })
+            }
+
+            resolve({
+              start,
+              stop
+            })
+
+          })
+        })
+    }
+
+    async function recordAudio(){
+      // get permission to acces microphone
+      navigator.permissions.query({name: 'microphone'})
+        .then(function (permissionObj){
+              console.log(permissionObj.state)
+        })
+        .catch(function (error) {
+            console.log('Got error :', error)
+        })
+
+        // get recorder object
+        recorder = await doRecordSaudio()
+    }
+</script>
+
+</body>
+</html>

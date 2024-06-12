@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Chat</title>
+</head>
+<body>
+    <video id="localVideo" autoplay muted></video>
+    <video id="remoteVideo" autoplay></video>
+    <h1>bem vindo</h1>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        // Lógica do cliente para iniciar uma chamada
+        function startCall() {
+            fetch('/call', {
+                method: 'POST',
+                // Possivelmente incluir informações adicionais (ex: ID do destinatário)
+            })
+            .then(response => {
+                // Lógica para lidar com a resposta do servidor
+            });
+        }
+
+        // Lógica do cliente para atender uma chamada
+        function answerCall() {
+            fetch('/answer', {
+                method: 'POST',
+                // Possivelmente incluir informações adicionais (ex: ID do chamador)
+            })
+            .then(response => {
+                // Lógica para lidar com a resposta do servidor
+            });
+        }
+
+        // Lógica do cliente para rejeitar uma chamada
+        function rejectCall() {
+            fetch('/reject', {
+                method: 'POST',
+                // Possivelmente incluir informações adicionais (ex: ID do chamador)
+            })
+            .then(response => {
+                // Lógica para lidar com a resposta do servidor
+            });
+        }
+
+    </script>
+</body>
+</html>

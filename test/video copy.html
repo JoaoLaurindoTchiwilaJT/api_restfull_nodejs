@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cliente Alvo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/simple-peer/simple-peer.min.js"></script>
+  <script>
+    const socket = io('http://localhost:3000');
+    let peer = null;
+    let localStream = null;
+    let targetPeerId = '';
+
+    socket.on('connect', () => {
+      console.log('Conectado ao servidor');
+    });
+
+    socket.on('initiatePeer', (initiatorId) => {
+      console.log('Recebida solicitação de chamada do cliente:', initiatorId);
+      // Definir o ID do cliente iniciador
+      targetPeerId = initiatorId;
+
+      if (!peer) {
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+          .then((stream) => {
+            localStream = stream;
+            // Inicializar a conexão peer-to-peer
+            peer = new SimplePeer({ initiator: false, stream: localStream });
+
+            // Adicionar stream de áudio e vídeo local
+            peer.addStream(localStream);
+
+            // Renderizar vídeo local
+            const localVideo = document.getElementById('localVideo');
+            localVideo.srcObject = localStream;
+
+            // Renderizar vídeo remoto
+            peer.on('stream', (remoteStream) => {
+              const remoteVideo = document.getElementById('remoteVideo');
+              remoteVideo.srcObject = remoteStream;
+            });
+
+            // Enviar sinal de resposta ao servidor
+            peer.on('signal', (signal) => {
+              socket.emit('signal', { signal, targetPeerId: initiatorId });
+            });
+
+            // Trocar mensagens
+            peer.on('data', (data) => {
+              console.log('Mensagem recebida:', data.toString());
+            });
+          })
+          .catch((error) => {
+            console.error('Erro ao acessar o dispositivo de mídia:', error);
+          });
+      } else {
+        console.log('Já existe uma chamada em andamento.');
+      }
+    });
+
+    function startCall() {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          localStream = stream;
+          // Solicitar ao servidor para iniciar a negociação P2P
+          socket.emit('initiatePeer', socket.id);
+        })
+        .catch((error) => {
+          console.error('Erro ao acessar o dispositivo de mídia:', error);
+        });
+    }
+  </script>
+</head>
+<body>
+  <h1>Cliente Alvo</h1>
+  <button onclick="startCall()">Atender Chamada</button><br><br>
+  <h2>Vídeo Local</h2>
+  <video id="localVideo" autoplay muted playsinline style="max-width: 100%;"></video><br><br>
+  <h2>Vídeo Remoto</h2>
+  <video id="remoteVideo" autoplay playsinline style="max-width: 100%;"></video>
+</body>
+</html>

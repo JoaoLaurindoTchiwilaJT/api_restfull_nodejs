@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisar vagas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        label, input, button {
+            display: block;
+            margin-bottom: 10px;
+        }
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>Pesquisar Dados</h2>
+    <form id="pesquisarForm">
+        <label for="palavraChave">Pesquisar vaga:</label>
+        <input type="text" id="vaga" name="vaga" required>
+        <button type="submit">Pesquisar</button>
+    </form>
+
+    <script>
+        // Script para pesquisar dados
+        document.getElementById('pesquisarForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const valor = document.getElementById('palavraChave').value;
+            try {
+                const response = await fetch('http://localhost:3000/pesquisar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ q: valor })
+                });
+                const data = await response.json();
+                console.log(data);
+                // Exibir resultado da pesquisa (pode ser ajustado conforme necessário)
+                alert(JSON.stringify(data));
+            } catch (error) {
+                console.error('Erro ao pesquisar vagas:', error);
+                alert('Erro ao pesquisar dados: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

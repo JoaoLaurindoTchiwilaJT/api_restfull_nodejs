@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de empresa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        label, input, textarea, button {
+            display: block;
+            margin-bottom: 10px;
+        }
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h2>Formulário de Empresa</h2>
+    <form id="empresaForm">
+        <label for="setor">site:</label>
+        <input type="text" id="site" name="site" required>
+        <label for="setor">setor:</label>
+        <input type="text" id="setor" name="setor" required>
+        <label for="localizacao">localizacao:</label>
+        <input type="text" id="localizacao" name="localizacao" required>
+        <input type="hidden" id="idusuario" name="idusuario" value="1">
+        <button type="submit">cadastrar</button>
+    </form>
+    <script>
+        document.getElementById('empresaForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // Criando um objeto JSON com os valores do formulário
+            const formData = {
+                site: document.getElementById('site').value,
+                setor: document.getElementById('setor').value,
+                localizacao: document.getElementById('localizacao').value,
+                idusuario: document.getElementById('idusuario').value
+            };
+
+            // Convertendo o objeto JSON em uma string
+            const jsonData = JSON.stringify(formData);
+
+            fetch('http://localhost:3000/empresa', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: jsonData
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Empresa cadastrada com sucesso!');
+                    alert('Empresa cadastrada com sucesso!');
+                } else {
+                    console.error('Erro ao cadastrar empresa:', response.statusText);
+                    alert('Erro ao cadastrar empresa: ' + response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao enviar requisição:', error);
+                alert('Erro ao enviar requisição: ' + error.message);
+            });
+        });
+    </script>
+</body>
+</html>

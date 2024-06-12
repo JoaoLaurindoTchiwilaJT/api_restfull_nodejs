@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload de Áudio</title>
+</head>
+<body>
+  <audio controls></audio>
+<button onclick="startRecording()">Iniciar Gravação</button>
+<button onclick="stopRecording()">Parar Gravação</button>
+
+<script>
+  let mediaRecorder;
+  let chunks = [];
+
+  async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
+
+    mediaRecorder.ondataavailable = event => {
+      chunks.push(event.data);
+    };
+
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(chunks, { type: 'audio/wav' });
+      uploadAudio(blob);
+      chunks = [];
+    };
+
+    mediaRecorder.start();
+  } catch (error) {
+    console.error('Erro ao iniciar a gravação:', error);
+  }
+}
+
+
+  function stopRecording() {
+    mediaRecorder.stop();
+  }
+
+  async function uploadAudio(blob) {
+    const formData = new FormData();
+    formData.append('arquivo', blob, 'recording.wav');
+    const id = 1;
+    const response = await fetch(`http://localhost:3000/mensagem/enviar/${id}`, {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json();
+    alert('Upload result:', result);
+  }
+</script>
+
+</body>
+</html>

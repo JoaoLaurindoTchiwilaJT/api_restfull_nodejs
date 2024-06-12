@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil</title>
+</head>
+<body>
+    <h1>Perfil do Usuário</h1>
+    <div id="avatarContainer"></div>
+
+    <script>
+        // Função para carregar a imagem do perfil do usuário
+        async function carregarAvatar() {
+            try {
+                const idUsuario = 1; // Substitua pelo ID do usuário logado
+                const tipo = "perfil";
+                const response = await fetch(`http://localhost:3000/upload/${tipo}/${idUsuario}/`);
+
+                // Verificando o tipo de conteúdo da resposta
+                const contentType = response.headers.get('Content-Type');
+
+                if (contentType && contentType.includes('application/json')) {
+                    // Se a resposta contém JSON, converter para objeto JavaScript
+                    const data = await response.json();
+                    console.log('Dados JSON:', data);
+
+                    // Concatenar o caminho relativo com a URL do servidor para formar a URL completa da imagem
+                    const urlCompleta = `http://localhost:3000/upload/${data.caminho}`;
+
+                    // Exibir o caminho completo em um alert
+                    alert('Caminho completo da imagem: ' + urlCompleta);
+
+                    // Criar imagem a partir da URL completa
+                    criarImagem(urlCompleta);
+                } else if (contentType && contentType.includes('text/plain')) {
+                    // Se a resposta contém texto, ler o texto
+                    const text = await response.text();
+                    console.log('Texto:', text);
+                } else if (contentType && contentType.includes('image')) {
+                    // Se a resposta contém uma imagem ou outro tipo de arquivo binário, ler como Blob
+                    const imagemBlob = await response.blob();
+                    console.log('Blob da imagem:', imagemBlob);
+                } else {
+                    console.log('Tipo de conteúdo não suportado:', contentType);
+                }
+
+                // Você pode fazer o que quiser com os dados aqui
+            } catch (error) {
+                console.error('Erro ao carregar o avatar:', error);
+            }
+        }
+
+        // Função para criar uma imagem a partir da URL
+        function criarImagem(url) {
+            // Criar um elemento de imagem
+            const imagemElemento = document.createElement('img');
+
+            // Definir os atributos da imagem
+            imagemElemento.src = url;
+            imagemElemento.alt = 'Imagem do perfil';
+
+            // Adicionar a imagem ao container
+            const avatarContainer = document.getElementById('avatarContainer');
+            avatarContainer.appendChild(imagemElemento);
+        }
+
+        // Chamando a função para carregar o avatar quando a página carregar
+        carregarAvatar();
+    </script>
+</body>
+</html>

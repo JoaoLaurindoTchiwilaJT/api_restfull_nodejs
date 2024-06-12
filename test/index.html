@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Chat</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js" integrity="sha512-luMnTJZ7oEchNDZAtQhgjomP1eZefnl82ruTH/3Oj/Yu5qYtwL7+dVRccACS/Snp1lFXq188XFipHKYE75IaQQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <video id="emissor" autoplay></video>
+    <video id="receptor" autoplay></video>
+    <!-- Seu comentário aqui 
+
+    <form id="chat">
+        <input type="text" name="username" placeholder="Digite o seu nome">
+        <div class="messages"></div>
+        <input type="text" name="message" placeholder="Digite a sua mensagem">
+        <button type="submit">Enviar</button>
+    </form>
+-->
+    <script type="text/javascript">
+        var socket = io('http://localhost:3000');
+        
+        socket.emit('emissor', function (idEmissor){
+            navigator.mediaDevices.getUserMedia({video: true}).then(stream =>{
+            const videoElemento = document.querySelector('#emissor')
+            videoElemento.srcObject = stream
+         });
+        } )
+   </script>
+</body>
+</html>
